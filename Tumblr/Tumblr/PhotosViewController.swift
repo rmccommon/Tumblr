@@ -26,7 +26,7 @@ class PhotosViewController: UIViewController, UITableViewDataSource, UITableView
                 print(error.localizedDescription)
             } else if let data = data,
                 let dataDictionary = try! JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
-                print(dataDictionary)
+                
                 
                 // TODO: Get the posts and store in posts property
                 let responseDictionary = dataDictionary["response"] as! [String: Any]
@@ -71,6 +71,19 @@ class PhotosViewController: UIViewController, UITableViewDataSource, UITableView
         
         
         return cell
+    }
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        let vc = segue.destination as! DetailsViewController
+        let cell = sender as! UITableViewCell
+        let indexPath = photoTableView.indexPath(for: cell)!
+        let post = self.posts[indexPath.row]
+        
+        if let photos = post["photos"] as? [[String:Any]]{
+            let photo = photos[0]
+            let originalSize = photo["original_size"] as! [String:Any]
+            let urlString = originalSize["url"] as! String
+            vc.photoString = urlString
+        }
     }
 
     override func didReceiveMemoryWarning() {
